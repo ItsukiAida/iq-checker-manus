@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f6fb">
+<!--
+  ■ 作成情報（モカが2026-11-23に追記。元のHTMLに記載がなかったため）
+  アプリ名　　　: IQの目安テスト（Manus版）
+  作成したAI　　: Manus
+  モデル・バージョン: Manus 2.0 Lite（2026-11-23 本人の申告）
+  思考モード　　: 不明（要確認）
+  作成日　　　　: 2026-11-23
+  依頼条件　　　: モカ作成の依頼文による（単一HTML・全20問・フッター・結果コピー・スマホ対応ルール）
+-->
+<title>IQの目安テスト（Manus版）</title>
+<meta name="description" content="IQの目安テスト（Manus版）。全20問・4択のIQの目安テストです。娯楽用の目安であり、正式な知能検査ではありません。">
+<meta property="og:title" content="IQの目安テスト（Manus版）｜相田樹">
+<meta property="og:description" content="Manus 2.0 Lite 作のIQの目安テスト。全20問・4択。娯楽用の目安です。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://itsukiaida.github.io/iq-checker-manus/">
+<meta property="og:image" content="https://itsukiaida.github.io/iq-checker-manus/ogp.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #20263a;
+    --muted: #68718a;
+    --line: #e2e6f0;
+    --accent: #5267df;
+    --accent-dark: #384dc3;
+    --surface: #fff;
+    --background: #f4f6fb;
+    --good: #167a58;
+    font-size: 18px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 12px 16px calc(40px + env(safe-area-inset-bottom));
+    background: var(--background);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+  }
+  body.small-text { font-size: 16px; }
+  button, textarea { font: inherit; }
+  button { touch-action: manipulation; }
+  .app {
+    width: min(100%, 760px);
+    min-height: calc(100vh - 52px);
+    min-height: calc(100dvh - 52px - env(safe-area-inset-bottom));
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0 10px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.15rem, 5vw, 1.55rem);
+    line-height: 1.25;
+    letter-spacing: .01em;
+  }
+  .text-toggle, .secondary-button {
+    border: 1px solid var(--line);
+    color: var(--ink);
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 9px 12px;
+    min-height: 44px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .app-info {
+    margin: 0 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: .82rem;
+  }
+  .app-info summary {
+    min-height: 42px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .app-info-body {
+    padding: 0 12px 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .app-info-body p { margin: 6px 0; }
+  .app-info-body strong { color: var(--ink); }
+  main { flex: 1; display: flex; flex-direction: column; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: clamp(16px, 4vw, 26px);
+    box-shadow: 0 8px 30px rgba(41, 53, 95, .06);
+  }
+  .welcome { margin: auto 0; }
+  .welcome h2, .result h2 { margin: 0 0 10px; font-size: 1.35rem; }
+  .welcome p { color: var(--muted); margin: 8px 0; }
+  .start-button, .primary-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 14px;
+    border: 0;
+    border-radius: 14px;
+    color: #fff;
+    background: var(--accent);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .start-button:hover, .primary-button:hover { background: var(--accent-dark); }
+  .quiz { margin: auto 0; }
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    color: var(--muted);
+    font-size: .9rem;
+    margin-bottom: 8px;
+  }
+  .progress-track {
+    height: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #edf0f7;
+    margin-bottom: 18px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width .2s ease;
+  }
+  .question {
+    margin: 0 0 16px;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    white-space: pre-line;
+  }
+  .choices { display: grid; gap: 9px; }
+  .choice {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    color: var(--ink);
+    background: #fff;
+    cursor: pointer;
+  }
+  .choice:hover { border-color: var(--accent); background: #f7f8ff; }
+  .choice[aria-pressed="true"] {
+    border: 2px solid var(--accent);
+    background: #f1f3ff;
+  }
+  .choice-letter {
+    display: inline-grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    flex: 0 0 29px;
+    border-radius: 50%;
+    background: #eef0f8;
+    font-weight: 700;
+  }
+  .quiz-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .quiz-actions button { margin-top: 0; }
+  .quiz-actions .secondary-button { flex: 0 0 auto; }
+  .quiz-actions .primary-button { flex: 1; }
+  button:focus-visible, textarea:focus-visible {
+    outline: 3px solid #aab5ff;
+    outline-offset: 2px;
+  }
+  .result { margin: auto 0; }
+  .score-panel {
+    padding: 15px;
+    margin: 14px 0;
+    border-radius: 16px;
+    background: #f3f5ff;
+    text-align: center;
+  }
+  .score-caption { color: var(--muted); font-size: .9rem; }
+  .score-number { font-size: clamp(2.2rem, 12vw, 3.3rem); font-weight: 800; line-height: 1.15; }
+  .score-range { color: var(--accent-dark); font-weight: 700; }
+  .notice { color: var(--muted); font-size: .88rem; margin: 10px 0; }
+  .category-list { list-style: none; padding: 0; margin: 12px 0; }
+  .category-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 2px;
+    border-bottom: 1px solid var(--line);
+  }
+  .share-label { display: block; font-weight: 700; margin-top: 12px; }
+  #shareText {
+    display: block;
+    width: 100%;
+    min-height: 96px;
+    margin-top: 6px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    background: #fbfcff;
+    resize: vertical;
+    overflow-wrap: anywhere;
+  }
+  .copy-status { min-height: 1.4em; color: var(--good); font-size: .9rem; margin: 6px 0 0; }
+  .restart-button {
+    margin-top: 4px;
+    min-height: 44px;
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    color: var(--accent-dark);
+    background: transparent;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: .76rem;
+    line-height: 1.55;
+    padding: 12px 0 0;
+  }
+  footer p { margin: 2px 0; }
+  [hidden] { display: none !important; }
+  @media (max-height: 700px) {
+    body { padding-top: 8px; }
+    .card { padding: 15px; }
+    .progress-track { margin-bottom: 12px; }
+    .question { margin-bottom: 11px; }
+    .choices { gap: 7px; }
+    .choice { min-height: 42px; padding: 7px 10px; }
+    .quiz { margin: 8px 0; }
+    .result, .welcome { margin: 8px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>IQの目安テスト（Manus版）</h1>
+    <button type="button" class="text-toggle" id="textToggle" aria-pressed="false">文字 小／標準</button>
+  </header>
+
+  <details class="app-info">
+    <summary>アプリ情報</summary>
+    <div class="app-info-body">
+      <p><strong>アプリ名：</strong>IQの目安テスト（Manus版）</p>
+      <p><strong>バージョン：</strong>Ver. 1.0</p>
+      <p><strong>思考モード：</strong>標準（段階的に考えて作成）</p>
+      <p><strong>内容：</strong>オリジナルの4択問題20問。数列・言葉・論理・計算・図形・推理を出題し、結果に推定IQの目安幅と分野別正解数を表示します。</p>
+      <p><strong>動作：</strong>単一HTMLファイルで動作。回答は外部送信しません。Fullscreen APIは使用しません。</p>
+      <p><strong>注意：</strong>娯楽用の目安であり、正式な知能検査ではありません。</p>
+    </div>
+  </details>
+
+  <main>
+    <section class="card welcome" id="welcome">
+      <h2>ひらめき力を試してみよう</h2>
+      <p>数列・言葉・論理・計算・図形・推理のオリジナル問題が全20問。各問、もっとも適切だと思う答えを選んでください。</p>
+      <p class="notice">時間制限はありません。結果は娯楽用の目安で、正式な知能検査の代わりにはなりません。</p>
+      <button type="button" class="start-button" id="startButton">テストを始める</button>
+    </section>
+
+    <section class="card quiz" id="quiz" hidden aria-live="polite">
+      <div class="quiz-top">
+        <span id="questionCount">1 / 20 問</span>
+        <span id="categoryLabel">数列</span>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <h2 class="question" id="questionText"></h2>
+      <div class="choices" id="choices"></div>
+      <div class="quiz-actions">
+        <button type="button" class="secondary-button" id="backButton">戻る</button>
+        <button type="button" class="primary-button" id="nextButton" disabled>次へ</button>
+      </div>
+    </section>
+
+    <section class="card result" id="result" hidden aria-live="polite">
+      <h2>テスト結果</h2>
+      <div class="score-panel">
+        <div class="score-caption">正解数 <span id="totalCorrect"></span> / 20</div>
+        <div class="score-number" id="iqNumber"></div>
+        <div class="score-range" id="iqRange"></div>
+      </div>
+      <h3>分野別の正解数</h3>
+      <ul class="category-list" id="categoryResults"></ul>
+      <p class="notice">この数値はこのクイズの得点をもとにした娯楽用の目安であり、標準化された検査によるIQではありません。</p>
+      <label class="share-label" for="shareText">結果テキスト・URL（必要なら編集してコピーできます）</label>
+      <textarea id="shareText" readonly></textarea>
+      <button type="button" class="primary-button" id="copyButton">結果をコピーする</button>
+      <p class="copy-status" id="copyStatus" role="status"></p>
+      <button type="button" class="restart-button" id="restartButton">もう一度挑戦する</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 相田樹</p>
+    <p>このテストはブラウザの中だけで動作し、回答は外部に送信されません</p>
+    <p>娯楽用の目安であり、正式な知能検査ではありません</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const questions = [
+    { category: "数列", text: "次の数列の□に入る数は？\n3, 7, 15, 31, □", choices: ["47", "62", "63", "64"], answer: 2 },
+    { category: "言葉", text: "「鳥：巣」と同じ関係になる組み合わせはどれ？", choices: ["魚：水", "馬：厩舎", "花：種", "本：文字"], answer: 1 },
+    { category: "論理", text: "すべての青い箱には丸いシールが貼られています。丸いシールの箱の一部は重いです。必ず正しいのはどれ？", choices: ["青い箱はすべて重い", "重い箱はすべて青い", "青い箱には丸いシールが貼られている", "丸いシールの箱はすべて青い"], answer: 2 },
+    { category: "計算", text: "ノート3冊とペン2本で740円。ノート1冊は180円です。ペン1本はいくら？", choices: ["80円", "100円", "110円", "150円"], answer: 1 },
+    { category: "図形", text: "正三角形を、辺に平行な線で底辺から1段ずつ区切り、3段の小さな三角形の列にしました。小さな三角形はいくつ？", choices: ["6", "8", "9", "10"], answer: 3 },
+    { category: "推理", text: "アキ、ベニ、チカの3人が走りました。アキはベニより先、チカはアキより先にゴールしました。最後にゴールしたのは？", choices: ["アキ", "ベニ", "チカ", "決められない"], answer: 1 },
+    { category: "数列", text: "次の数列の□に入る数は？\n2, 5, 10, 17, 26, □", choices: ["35", "36", "37", "38"], answer: 2 },
+    { category: "言葉", text: "「慎重」にもっとも近い意味の言葉はどれ？", choices: ["用心深い", "気まぐれな", "大胆な", "無関心な"], answer: 0 },
+    { category: "論理", text: "赤・青・黄のカードが1枚ずつあります。赤は青より左、黄は青より右に置きました。左から正しい順は？", choices: ["赤・青・黄", "青・赤・黄", "黄・青・赤", "赤・黄・青"], answer: 0 },
+    { category: "計算", text: "ある数を4倍して6を足すと34になります。ある数はいくつ？", choices: ["6", "7", "8", "10"], answer: 1 },
+    { category: "図形", text: "点を結ぶと四角形になる、一直線上にない点の最少数は？", choices: ["2点", "3点", "4点", "5点"], answer: 2 },
+    { category: "推理", text: "暗号で「ねこ」を「のさ」、「いぬ」を「うね」と書きます。各文字を五十音表で1つ後ろへずらす規則なら、「さる」はどう書く？（「ん」の次は「あ」）", choices: ["しれ", "され", "ざれ", "しろ"], answer: 0 },
+    { category: "数列", text: "次の数列の□に入る数は？\n1, 1, 2, 3, 5, 8, □", choices: ["11", "12", "13", "15"], answer: 2 },
+    { category: "言葉", text: "「種をまく」から「芽が出る」へ進むように、「練習する」から進むものとして最も自然なのは？", choices: ["道具を買う", "上達する", "休む", "忘れる"], answer: 1 },
+    { category: "論理", text: "ユキはミナより背が高い。ミナはソラより背が高い。必ず正しいのはどれ？", choices: ["ソラはユキより背が高い", "ユキはソラより背が高い", "ミナとユキは同じ背", "ソラがいちばん背が高い"], answer: 1 },
+    { category: "計算", text: "120ページの本を、毎日初日に12ページ、その後は毎日15ページずつ読みます。読み終えるのは何日目？", choices: ["7日目", "8日目", "9日目", "10日目"], answer: 1 },
+    { category: "図形", text: "長方形を、角から反対側の角へ対角線1本で切ると、できる図形は？", choices: ["同じ大きさの三角形2つ", "長方形2つ", "正方形2つ", "大きさの違う円2つ"], answer: 0 },
+    { category: "推理", text: "箱A・B・Cのうち、賞品は1箱だけに入っています。箱には「Aにはない」「Bにある」「Bにはない」と書かれ、3つの文のうち正しいのは1つだけです。賞品はどの箱？", choices: ["箱A", "箱B", "箱C", "条件から決められない"], answer: 0 },
+    { category: "数列", text: "次の数列の□に入る数は？\n81, 27, 9, 3, □", choices: ["0", "1", "1.5", "2"], answer: 1 },
+    { category: "計算", text: "同じ速さで動く機械4台が4分で部品を4個作ります。同じ速さの機械8台が8分で作る部品は何個？", choices: ["8個", "16個", "24個", "32個"], answer: 3 }
+  ];
+
+  const categories = ["数列", "言葉", "論理", "計算", "図形", "推理"];
+  let current = 0;
+  let answers = Array(questions.length).fill(null);
+
+  const $ = (id) => document.getElementById(id);
+  const welcome = $("welcome");
+  const quiz = $("quiz");
+  const result = $("result");
+
+  $("textToggle").addEventListener("click", () => {
+    const isSmall = document.body.classList.toggle("small-text");
+    $("textToggle").setAttribute("aria-pressed", String(isSmall));
+    $("textToggle").textContent = isSmall ? "文字 大／小" : "文字 小／標準";
+  });
+
+  $("startButton").addEventListener("click", () => {
+    current = 0;
+    answers = Array(questions.length).fill(null);
+    welcome.hidden = true;
+    result.hidden = true;
+    quiz.hidden = false;
+    renderQuestion();
+  });
+
+  function renderQuestion() {
+    const q = questions[current];
+    $("questionCount").textContent = `${current + 1} / ${questions.length} 問`;
+    $("categoryLabel").textContent = q.category;
+    $("progressBar").style.width = `${((current + 1) / questions.length) * 100}%`;
+    $("questionText").textContent = q.text;
+    $("choices").replaceChildren();
+
+    q.choices.forEach((choice, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "choice";
+      button.setAttribute("aria-pressed", String(answers[current] === index));
+
+      const letter = document.createElement("span");
+      letter.className = "choice-letter";
+      letter.textContent = String.fromCharCode(65 + index);
+
+      const label = document.createElement("span");
+      label.textContent = choice;
+
+      button.append(letter, label);
+      button.addEventListener("click", () => {
+        answers[current] = index;
+        renderQuestion();
+      });
+      $("choices").append(button);
+    });
+
+    $("backButton").disabled = current === 0;
+    $("backButton").style.opacity = current === 0 ? ".55" : "1";
+    $("nextButton").disabled = answers[current] === null;
+    $("nextButton").textContent = current === questions.length - 1 ? "結果を見る" : "次へ";
+  }
+
+  $("backButton").addEventListener("click", () => {
+    if (current > 0) {
+      current--;
+      renderQuestion();
+    }
+  });
+
+  $("nextButton").addEventListener("click", () => {
+    if (answers[current] === null) return;
+    if (current < questions.length - 1) {
+      current++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    const correct = questions.reduce(
+      (sum, q, i) => sum + (answers[i] === q.answer ? 1 : 0),
+      0
+    );
+    const counts = Object.fromEntries(
+      categories.map(name => [name, { correct: 0, total: 0 }])
+    );
+
+    questions.forEach((q, i) => {
+      counts[q.category].total++;
+      if (answers[i] === q.answer) counts[q.category].correct++;
+    });
+
+    // このミニクイズ専用の娯楽的な目安。標準化されたIQ換算ではありません。
+    const estimate = Math.round(75 + correct * 2.5);
+    const low = Math.max(60, estimate - 10);
+    const high = Math.min(150, estimate + 10);
+
+    $("totalCorrect").textContent = correct;
+    $("iqNumber").textContent = `約 ${estimate}`;
+    $("iqRange").textContent = `目安の幅：${low}〜${high}`;
+
+    $("categoryResults").replaceChildren();
+    categories.forEach(name => {
+      const li = document.createElement("li");
+      const label = document.createElement("span");
+      const score = document.createElement("strong");
+      label.textContent = name;
+      score.textContent = `${counts[name].correct} / ${counts[name].total} 問`;
+      li.append(label, score);
+      $("categoryResults").append(li);
+    });
+
+    const categoryText = categories
+      .map(name => `${name}：${counts[name].correct}/${counts[name].total}`)
+      .join("\n");
+
+    $("shareText").value =
+      `IQの目安テスト（Manus版）\n` +
+      `正解数：${correct} / 20\n` +
+      `推定IQの目安：約${estimate}（${low}〜${high}）\n` +
+      `${categoryText}\n\n` +
+      `このテストは娯楽用の目安であり、正式な知能検査ではありません。\n` +
+      `URL：${location.href}`;
+
+    $("copyStatus").textContent = "";
+    quiz.hidden = true;
+    result.hidden = false;
+  }
+
+  $("copyButton").addEventListener("click", async () => {
+    const text = $("shareText").value;
+    try {
+      await navigator.clipboard.writeText(text);
+      $("copyStatus").textContent = "結果とURLをコピーしました。";
+    } catch {
+      $("shareText").focus();
+      $("shareText").select();
+      const copied = document.execCommand("copy");
+      $("copyStatus").textContent = copied
+        ? "結果とURLをコピーしました。"
+        : "コピーできませんでした。テキストを選択して手動でコピーしてください。";
+    }
+  });
+
+  $("restartButton").addEventListener("click", () => {
+    current = 0;
+    answers = Array(questions.length).fill(null);
+    result.hidden = true;
+    welcome.hidden = false;
+  });
+})();
+</script>
+</body>
+</html>
